@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ecte477-starter-cpp)
+project(ecte477_starter_cpp)
 find_package(catkin REQUIRED COMPONENTS 
   roscpp rviz
   message_runtime std_msgs sensor_msgs geometry_msgs

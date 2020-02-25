@@ -1,5 +1,5 @@
 <!-- Launch the command_server_node.py -->
 <launch >
-    <node pkg="ecte477-starter-cpp" type="command_server_node" name="command_server_node" output="screen">
+    <node pkg="ecte477_starter_cpp" type="command_server_node" name="command_server_node" output="screen">
     </node>
 </launch>
