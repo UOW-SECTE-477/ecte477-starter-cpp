@@ -54,7 +54,7 @@ namespace ecte477
               follow_side(FollowSide::LEFT)
         {
             this->subscriber_laser_scan = nh.subscribe<sensor_msgs::LaserScan>("scan", 1, &WallFollowerNode::callback_laser_scan, this);
-            this->subscriber_command = nh.subscribe<std_msgs::String>("cmd", 1, &WallFollowerNode::callback_command, this);
+            this->subscriber_command = nh.subscribe<std_msgs::String>("state", 1, &WallFollowerNode::callback_state, this);
             this->publisher_twist = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1, false);
         }
 
@@ -181,20 +181,24 @@ namespace ecte477
             this->stopped = false;
         }
 
-        void callback_command(std_msgs::StringConstPtr const& command_msg)
+        void callback_state(std_msgs::StringConstPtr const& state_msg)
         {
             ROS_INFO("callback_command()");
-            Commands command = commands[command_msg->data];
-            if (command == Commands::EXPLORE)
+            std::string state = state_msg->data;
+            if (state == RobotState::EXPLORE)
             {
                 this->explore = true;
                 ROS_INFO("Starting Exploring");
             }
-            else if (command == Commands::RETURN || command == Commands::HALT)
+            else if (state == RobotState::RETURNING || state == RobotState::PAUSED)
             {
                 this->explore = false;
                 this->stopped = false;
                 ROS_INFO("Stopping Exploring");
+            }
+            else
+            {
+                ROS_INFO("Unrecognised State: %s", state.c_str());
             }
         }
 

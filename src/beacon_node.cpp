@@ -40,12 +40,16 @@ namespace ecte477
     class BeaconNode
     {
     public:
+        // Constants
+        static constexpr double DEPTH_SCALE = 0.001;
+
         BeaconNode()
         {
-            this->subscriber = nh.subscribe<sensor_msgs::Image>("camera/color/image_raw/", 1, &BeaconNode::callback_colour_image, this);
+            this->subscriber_colour_image = nh.subscribe<sensor_msgs::Image>("camera/color/image_raw/", 1, &BeaconNode::callback_colour_image, this);
+            this->subscriber_depth = nh.subscribe<sensor_msgs::Image>("camera/aligned_depth_to_color/image_raw/", 1, &BeaconNode::callback_depth, this);
 
             // Process beacons into vector
-            ros::NodeHandle nh_params("~");
+            ros::NodeHandle nh_params("~"); // ~ is used to get params
             try
             {
                 XmlRpc::XmlRpcValue beacons_parameter;
@@ -68,7 +72,7 @@ namespace ecte477
 
         void callback_colour_image(sensor_msgs::ImageConstPtr const& colour_image)
         {
-            ROS_INFO("callback_colour_image()");
+            ROS_INFO("callback_colour_image()"); // For testing, can be removed
 
             // Get image message as an OpenCV Mat object (most functions you use for image processing will want this)
             cv::Mat frame = cv_bridge::toCvShare(colour_image, sensor_msgs::image_encodings::BGR8)->image;
@@ -77,8 +81,24 @@ namespace ecte477
             cv::waitKey(2);
         }
 
+        void callback_depth(sensor_msgs::ImageConstPtr const& depth_image)
+        {
+            ROS_INFO("callback_depth()");
+
+            // Get image message as an OpenCV Mat object (most functions you use for image processing will want this)
+            cv::Mat frame = cv_bridge::toCvCopy(depth_image, sensor_msgs::image_encodings::TYPE_16UC1)->image; // Note encoding
+
+            // Find the depth of the centre pixel in metres
+            cv::Point2i centre_point(frame.cols / 2, frame.rows / 2);
+            double centre_depth = DEPTH_SCALE * static_cast<double>(frame.at<uint16_t>(centre_point));
+            ROS_INFO("centre depth: %.4f", centre_depth);
+
+            cv::imshow("cv_depth", frame);
+            cv::waitKey(2);
+        }
+
     private:
-        ros::Subscriber subscriber;
+        ros::Subscriber subscriber_colour_image, subscriber_depth;
         ros::NodeHandle nh;
         std::vector<Beacon> beacons;
     };

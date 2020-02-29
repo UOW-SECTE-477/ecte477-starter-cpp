@@ -17,16 +17,11 @@
 
 namespace ecte477
 {
-    enum class Colours
+    namespace Colours
     {
-        RED,
-        GREEN,
-        BLUE,
-        YELLOW
-    };
-
-    std::unordered_map<std::string, Colours> colours = {{"red", Colours::RED},
-                                                        {"green", Colours::GREEN},
-                                                        {"blue", Colours::BLUE},
-                                                        {"yellow", Colours::YELLOW}};
+        static std::string const RED = "red";
+        static std::string const GREEN = "green";
+        static std::string const BLUE = "blue";
+        static std::string const YELLOW = "yellow";
+    } // namespace Colours
 } // namespace ecte477

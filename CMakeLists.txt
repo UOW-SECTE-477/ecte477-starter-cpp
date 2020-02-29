@@ -24,5 +24,5 @@ endmacro()
 # Build each node
 build_node(beacon_node)
 build_node(command_server_node)
-build_node(depth_node)
 build_node(wall_follower_node)
+build_node(navigator_node)
